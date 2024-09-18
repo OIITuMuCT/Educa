@@ -2,9 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from datetime import timezone
+from .fields import OrderField
 
 class Subject(models.Model):
+    """ Модель название предмета """
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
 
@@ -17,6 +18,7 @@ class Subject(models.Model):
 
 
 class Course(models.Model):
+    """ Модель курса """
     owner = models.ForeignKey(
         User,
         related_name='courses_created',
@@ -31,6 +33,7 @@ class Course(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     
     class Meta:
+        """ Сортирует """
         ordering = ['-created']
 
 
@@ -39,18 +42,25 @@ class Course(models.Model):
 
 
 class Module(models.Model):
+    """ Модуль курса """
     course = models.ForeignKey(
         Course, related_name='modules', on_delete=models.CASCADE
     )
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
+    order = OrderField(blank=True, for_fields=['course'])
 
+    class Meta:
+        ordering =['order']
 
     def __str__(self):
-        return self.title
+        return f'{self.order}. {self.title}'
+
+
 
 
 class Content(models.Model):
+    """ Модель контент содержит: text, file, image, video """
     module = models.ForeignKey(
         Module,
         related_name='contents',
@@ -66,10 +76,19 @@ class Content(models.Model):
                         'file')})
     object_id = models.PositiveIntegerField()
     item = GenericForeignKey('content_type', 'object_id')
+    order = OrderField(blank=True, for_fields=['module'])
+    
+    class Meta:
+        ordering = ['order']
 
 
 
 class ItemBase(models.Model):
+    """ 
+    Абстрактная модель в которой определяются поля: 
+        owner, title, created, updated. Указанные поля
+        будут общие для всех типов содержимого.
+    """
     owner = models.ForeignKey(User,
                               related_name='%(class)s_related',
                               on_delete=models.CASCADE)
@@ -85,13 +104,17 @@ class ItemBase(models.Model):
         return self.title
 
 class Text(ItemBase):
+    """ Для хранения текстового содержимого """
     file = models.FileField(upload_to='files')
 
 class File(ItemBase):
+    """ Для хранения файлов. """
     file = models.FileField(upload_to='files')
 
 class Image(ItemBase):
+    """ Для хранения файлов изображений """
     file = models.FileField(upload_to='image')
 
 class Video(ItemBase):
+    """ Для хранения видео. """
     url = models.URLField()

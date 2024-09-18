@@ -4,6 +4,11 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 class OrderField(models.PositiveIntegerField):
+    """ Это конкретно-прикладное поле OrderField. Оно наследует от 
+предоставляемого веб-фреймворком Django поля PositiveIntegerField. 
+Поле OrderField принимает опциональный параметр for_fields, который 
+позволяет указывать поля, используемые для упорядочения данных.
+"""
     def __init__(self, for_fields=None, *args, **kwargs):
         self.for_fields = for_fields
         super().__init__(*args, **kwargs)
