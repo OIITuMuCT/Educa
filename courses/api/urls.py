@@ -4,10 +4,20 @@ from . import views
 app_name = "courses"
 
 urlpatterns = [
-    path("subjects/",
+    path(
+         "subjects/",
          views.SubjectListView.as_view(),
-         name="subject_list"),
-    path("subjects/<pk>/",
+         name="subject_list"
+    ),
+    path(
+         "subjects/<pk>/",
          views.SubjectDetailView.as_view(),
-         name="subject_detail"),
+         name="subject_detail"
+    ),
+    path(
+         'courses/<pk>/enroll/',
+         views.CourseEnrollView.as_view(),
+         name='course_enroll'
+    ),
+    
 ]
