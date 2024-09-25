@@ -141,6 +141,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_REDIRECT_URL = reverse_lazy('student_course_list')
+# LOGIN_URL = reverse_lazy("login")
+# LOGOUT_URL = reverse_lazy("logout")
 
 # memcached and redis settings
 CACHES = {
