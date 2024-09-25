@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from django.urls import reverse_lazy
-from django.conf.global_settings import INTERNAL_IPS, LOGIN_REDIRECT_URL
+# from django.conf.global_settings import INTERNAL_IPS, LOGIN_REDIRECT_URL
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +37,8 @@ INTERNAL_IPS = [
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
+    # "channels",
     "courses.apps.CoursesConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -49,8 +51,7 @@ INSTALLED_APPS = [
     "embed_video",
     "redisboard",
     "rest_framework",
-    'chat',
-    
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -83,6 +84,10 @@ TEMPLATES = [
         },
     },
 ]
+
+# Asynchronous Server Gateway Interface - клиент серверный протокол взаимодействия
+# веб-сервера и приложения, дальнейшее развитие технологии WSGI
+
 
 WSGI_APPLICATION = "educa.wsgi.application"
 
@@ -165,3 +170,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ]
 }
+
+
+# ASGI_APPLICATION = "educa.routing.application"
+ASGI_APPLICATION = "educa.asgi.application"
