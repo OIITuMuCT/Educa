@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     "embed_video",
     "redisboard",
     "rest_framework",
+    'chat',
+    
 ]
 
 MIDDLEWARE = [
