@@ -6,20 +6,27 @@ from rest_framework import generics
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
+from courses.api.pagination import StandardPagination
 from courses.models import Subject, Course
 from courses.api.serializers import SubjectSerializer, CourseSerializer
 from courses.api.permissions import IsEnrolled
 from courses.api.serializers import CourseWithContentsSerializer
+from django.db.models import Count
 
 
 class SubjectListView(generics.ListAPIView):
-    queryset = Subject.objects.all()
+    queryset = Subject.objects.annotate(total_courses=Count('courses'))
     serializer_class = SubjectSerializer
 
 
 class SubjectDetailView(generics.RetrieveAPIView):
-    queryset = Subject.objects.all()
+    queryset = Subject.objects.annotate(total_courses=Count("courses"))
     serializer_class = SubjectSerializer
+
+class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Subject.objects.annotate(total_courses=Count('courses'))
+    serializer_class = SubjectSerializer
+    pagination_class = StandardPagination
 
 
 # class CourseEnrollView(APIView):
@@ -33,7 +40,10 @@ class SubjectDetailView(generics.RetrieveAPIView):
 
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Course.objects.all()
+    # queryset = Course.objects.prefetch_related('modules')
     serializer_class = CourseSerializer
 
     @action(
