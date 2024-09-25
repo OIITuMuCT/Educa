@@ -14,7 +14,7 @@
         <form action="{% url "logout" %}" method="post">
           {% csrf_token %}
           <button type="submit" class="btn btn-success"> Sing out</button>
-        </form>
+        </form> 
           {% comment %} <li><a href="{% url "logout" %}">Sign out</a></li> {% endcomment %}
         {% else %}
           <li><a href="{% url "login" %}">Sign in</a></li>
