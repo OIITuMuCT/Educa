@@ -1,22 +1,29 @@
-from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
-from django.apps import apps
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-)
-from django.core.cache import cache
-from django.db.models import Count
-from django.forms.models import modelform_factory
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic.base import TemplateResponseMixin, View
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.detail import DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.urls import reverse_lazy
+from django.forms.models import modelform_factory
+from django.apps import apps
+from django.db.models import Count
+from django.core.cache import cache
+from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from students.forms import CourseEnrollForm
-
 from .forms import ModuleFormSet
-from .models import Content, Course, Module, Subject
+from .models import Course
+from .models import Module, Content
+from .models import Subject
+
+
+class ManageCourseListView(ListView):
+    model = Course
+    template_name = "courses/manage/course/list.html"
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(owner=self.request.user)
 
 
 class OwnerMixin:
@@ -114,10 +121,7 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
 
     def post(self, request, module_id, model_name, id=None):
         form = self.get_form(
-            self.model,
-            instance=self.obj,
-            data=request.POST,
-            files=request.FILES,
+            self.model, instance=self.obj, data=request.POST, files=request.FILES
         )
         if form.is_valid():
             obj = form.save(commit=False)
@@ -186,11 +190,7 @@ class CourseListView(TemplateResponseMixin, View):
                 courses = all_courses
                 cache.set("all_courses", courses)
         return self.render_to_response(
-            {
-                "subjects": subjects,
-                "subject": subject,
-                "courses": courses,
-            }
+            {"subjects": subjects, "subject": subject, "courses": courses}
         )
 
 

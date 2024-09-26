@@ -1,16 +1,14 @@
-from django.contrib.auth.models import User
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.template.loader import render_to_string
-
 from .fields import OrderField
 
 
 class Subject(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
-    
 
     class Meta:
         ordering = ["title"]
@@ -85,8 +83,7 @@ class ItemBase(models.Model):
 
     def render(self):
         return render_to_string(
-            f"courses/content/{self._meta.model_name}.html",
-            {"item": self},
+            f"courses/content/{self._meta.model_name}.html", {"item": self}
         )
 
 
