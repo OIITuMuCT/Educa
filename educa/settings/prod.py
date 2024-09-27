@@ -5,4 +5,7 @@ ADMINS = [
     ("Admin", "admin@admin.com"),
 ]
 ALLOWED_HOSTS = ["*"]
-DATABASES = {"default": {}}
+
+DATABASES = {
+    "default": {}
+}
